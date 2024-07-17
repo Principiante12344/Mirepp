@@ -1,10 +1,10 @@
 const smpl = require("./tools/simple.js");
 
 /**
- * Handles requests based on the given options.
- * @param {Object} ctx The context of the request.
- * @param {Object} options The given options.
- * @returns {Object} Object containing status and message if applicable, otherwise null.
+ * Maneja solicitudes basadas en las opciones dadas.
+ * @param {Object} ctx El contexto de la solicitud.
+ * @param {Object} options Las opciones dadas.
+ * @returns {Object} Objeto que contiene el estado y el mensaje si corresponde, de lo contrario, null.
  */
 exports.handler = async (ctx, options) => {
     const senderNumber = ctx._sender.jid.split("@")[0];
