@@ -1,4 +1,4 @@
-// Required modules and dependencies
+// Módulos y dependencias requeridos
 const {
     handler
 } = require("./handler.js");
@@ -21,10 +21,10 @@ const {
     inspect
 } = require("util");
 
-// Connection message.
-console.log("Connecting...");
+// Mensaje de conexión.
+console.log("Conectando...");
 
-// Create a new bot instance.
+// Crear una nueva instancia del bot.
 const bot = new Client({
     prefix: global.bot.prefix,
     readIncommingMsg: true,
@@ -34,24 +34,24 @@ const bot = new Client({
     selfReply: true
 });
 
-// Create a new database instance.
+// Crear una nueva instancia de la base de datos.
 const db = new SimplDB();
 global.db = db;
 
-// Event handling when the bot is ready.
+// Manejo de eventos cuando el bot está listo.
 bot.ev.once(Events.ClientReady, async (m) => {
-    console.log(`Ready at ${m.user.id}`);
+    console.log(`Listo en ${m.user.id}`);
     global.system.startTime = Date.now();
 });
 
-// Create command handlers and load commands.
+// Crear manejadores de comandos y cargar comandos.
 const cmd = new CommandHandler(bot, path.resolve(__dirname, "commands"));
 cmd.load();
 
-// Assign global handler.
+// Asignar manejador global.
 global.handler = handler;
 
-// Event handling when a message appears.
+// Manejo de eventos cuando aparece un mensaje.
 bot.ev.on(Events.MessagesUpsert, async (m, ctx) => {
     const senderNumber = ctx._sender.jid.split("@")[0];
     const senderJid = ctx._sender.jid;
@@ -60,13 +60,13 @@ bot.ev.on(Events.MessagesUpsert, async (m, ctx) => {
     const isGroup = ctx.isGroup();
     const isPrivate = !isGroup;
 
-    // Ignore messages sent by the bot itself.
+    // Ignorar mensajes enviados por el propio bot.
     if (m.key.fromMe) return;
 
-    // Auto-typing simulation for commands.
+    // Simulación de escritura automática para comandos.
     if (smpl.isCmd(m, ctx)) ctx.simulateTyping();
 
-    // AFK handling: Mentioned users.
+    // Manejo de AFK: Usuarios mencionados.
     const mentionJids = m.message?.extendedTextMessage?.contextInfo?.mentionedJid;
     if (mentionJids && mentionJids.length > 0) {
         for (const mentionJid of mentionJids) {
@@ -78,12 +78,12 @@ bot.ev.on(Events.MessagesUpsert, async (m, ctx) => {
                 ]);
                 const timeAgo = smpl.convertMsToDuration(Date.now() - timeStamp);
 
-                return ctx.reply(`Dia AFK dengan alasan ${reason} selama ${timeAgo || "kurang dari satu detik."}.`);
+                return ctx.reply(`Está AFK con la razón ${reason} durante ${timeAgo || "menos de un segundo."}.`);
             }
         }
     }
 
-    // AFK handling: Returning from AFK.
+    // Manejo de AFK: Regreso de AFK.
     const getAFKMessage = await db.get(`user.${senderNumber}.afk`);
     if (getAFKMessage) {
         const [reason, timeStamp] = await Promise.all([
@@ -93,12 +93,12 @@ bot.ev.on(Events.MessagesUpsert, async (m, ctx) => {
         const timeAgo = smpl.convertMsToDuration(Date.now() - timeStamp);
         await db.delete(`user.${senderNumber}.afk`);
 
-        return ctx.reply(`Anda mengakhiri AFK dengan alasan ${reason} selama ${timeAgo || "kurang dari satu detik."}.`);
+        return ctx.reply(`Has terminado el AFK con la razón ${reason} durante ${timeAgo || "menos de un segundo."}.`);
     }
 
-    // Owner-only commands.
+    // Comandos solo para el propietario.
     if (smpl.isOwner(ctx, senderNumber) === 1) {
-        // Eval command: Execute JavaScript code.
+        // Comando Eval: Ejecutar código JavaScript.
         if (m.content && m.content.startsWith && (m.content.startsWith("> ") || m.content.startsWith(">> "))) {
             const code = m.content.slice(2);
 
@@ -108,11 +108,11 @@ bot.ev.on(Events.MessagesUpsert, async (m, ctx) => {
                 return await ctx.reply(inspect(result));
             } catch (error) {
                 console.error("Error:", error);
-                return ctx.reply(`${bold("[ ! ]")} Terjadi kesalahan: ${error.message}`);
+                return ctx.reply(`${bold("[ ! ]")} Se produjo un error: ${error.message}`);
             }
         }
 
-        // Exec command: Execute shell commands.
+        // Comando Exec: Ejecutar comandos de shell.
         if (m.content && m.content.startsWith && m.content.startsWith("$ ")) {
             const command = m.content.slice(2);
 
@@ -122,24 +122,24 @@ bot.ev.on(Events.MessagesUpsert, async (m, ctx) => {
                 return await ctx.reply(output);
             } catch (error) {
                 console.error("Error:", error);
-                return ctx.reply(`${bold("[ ! ]")} Terjadi kesalahan: ${error.message}`);
+                return ctx.reply(`${bold("[ ! ]")} Se produjo un error: ${error.message}`);
             }
         }
     }
 
-    // Group-specific actions.
+    // Acciones específicas del grupo.
     if (isGroup) {
-        // Antilink handling.
+        // Manejo de antilink.
         const getAntilink = await db.get(`group.${groupNumber}.antilink`);
         const urlRegex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)\b/i;
         if (getAntilink && m.content && urlRegex.test(m.content)) {
             if ((await smpl.isAdmin(ctx)) === 1) return;
 
-            await ctx.reply(`${bold("[ ! ]")} Jangan kirim tautan!`);
+            await ctx.reply(`${bold("[ ! ]")} ¡No envíes enlaces!`);
             return await ctx.deleteMessage(m.key);
         }
 
-        // Antispam handling
+        // Manejo de antispam.
         const getAntispam = await db.get(`group.${groupNumber}.antispam`);
         if (getAntispam) {
             if (await smpl.isAdmin(ctx)) return;
@@ -167,9 +167,9 @@ bot.ev.on(Events.MessagesUpsert, async (m, ctx) => {
                 await db.set(`group.${groupNumber}.spam`, spam);
                 return;
             } else if (spam.count <= 5) {
-                await ctx.reply(`${bold("[ ! ]")} Jangan spam! (Warning ${spam.count}/5)`);
+                await ctx.reply(`${bold("[ ! ]")} ¡No hagas spam! (Advertencia ${spam.count}/5)`);
             } else {
-                await ctx.reply(`${bold("[ ! ]")} Anda telah dikick karena spamming!`);
+                await ctx.reply(`${bold("[ ! ]")} ¡Has sido expulsado por hacer spam!`);
                 await ctx.group().kick([senderJid]);
             }
 
@@ -177,9 +177,9 @@ bot.ev.on(Events.MessagesUpsert, async (m, ctx) => {
         }
     }
 
-    // Private messages.
+    // Mensajes privados.
     if (isPrivate) {
-        // Menfess handling.
+        // Manejo de Menfess.
         const getMessageDataMenfess = await db.get(`menfess.${senderNumber}`);
         if (getMessageDataMenfess) {
             if (m.message?.extendedTextMessage?.contextInfo?.quotedMessage?.conversation === m.content) {
@@ -187,17 +187,17 @@ bot.ev.on(Events.MessagesUpsert, async (m, ctx) => {
                 try {
                     await sendMenfess(ctx, m, senderNumber, from);
 
-                    return ctx.reply("Pesan berhasil terkirim!");
+                    return ctx.reply("¡Mensaje enviado con éxito!");
                 } catch (error) {
                     console.error("Error:", error);
-                    return ctx.reply(`${bold("[ ! ]")} Terjadi kesalahan: ${error.message}`);
+                    return ctx.reply(`${bold("[ ! ]")} Se produjo un error: ${error.message}`);
                 }
             }
         }
     }
 });
 
-// Event handling when a user joins or leaves a group
+// Manejo de eventos cuando un usuario se une o deja un grupo
 bot.ev.on(Events.UserJoin, (m) => {
     m.eventsType = "UserJoin";
     handleUserEvent(m);
@@ -208,11 +208,10 @@ bot.ev.on(Events.UserLeave, (m) => {
     handleUserEvent(m);
 });
 
-
-// Launch the bot.
+// Lanzar el bot.
 bot.launch().catch((error) => console.error("Error:", error));
 
-// Utility functions
+// Funciones de utilidad
 async function execPromise(command) {
     return new Promise((resolve, reject) => {
         exec(command, (error, stdout, stderr) => {
@@ -230,11 +229,11 @@ async function execPromise(command) {
 async function sendMenfess(ctx, m, senderNumber, from) {
     await ctx.sendMessage(`${from}@s.whatsapp.net`, {
         text: `❖ ${bold("Menfess")}\n` +
-            `Hai, saya ${global.bot.name}, Dia (${senderNumber}) menjawab pesan menfess yang Anda kirimkan.\n` +
+            `Hola, soy ${global.bot.name}, Él (${senderNumber}) respondió al mensaje menfess que enviaste.\n` +
             "-----\n" +
             `${content}\n` +
             "-----\n" +
-            "Jika ingin membalas, Anda harus mengirimkan perintah lagi.\n"
+            "Si quieres responder, debes enviar el comando de nuevo.\n"
     }, {
         quoted: m.key
     });
@@ -256,10 +255,10 @@ async function handleUserEvent(m) {
                 try {
                     profile = await bot.core.profilePictureUrl(jid, "image");
                 } catch {
-                    profile = "https://lh3.googleusercontent.com/proxy/esjjzRYoXlhgNYXqU8Gf_3lu6V-eONTnymkLzdwQ6F6z0MWAqIwIpqgq_lk4caRIZF_0Uqb5U8NWNrJcaeTuCjp7xZlpL48JDx-qzAXSTh00AVVqBoT7MJ0259pik9mnQ1LldFLfHZUGDGY=w1200-h630-p-k-no-nu";
+                    profile = "https://qu.ax/gQpQ.webp";
                 }
 
-                const message = m.eventsType === "UserJoin" ? `Selamat datang @${jid.split("@")[0]} di grup ${metadata.subject}!` : `@${jid.split("@")[0]} keluar dari grup ${metadata.subject}.`;
+                const message = m.eventsType === "UserJoin" ? `Bienvenido @${jid.split("@")[0]} al grupo ${metadata.subject}!` : `@${jid.split("@")[0]} salió del grupo ${metadata.subject}.`;
 
                 await bot.core.sendMessage(id, {
                     text: message,
@@ -269,7 +268,7 @@ async function handleUserEvent(m) {
                             mediaType: 1,
                             previewType: 0,
                             mediaUrl: global.bot.groupChat,
-                            title: m.eventsType === "UserJoin" ? "JOIN" : "LEAVE",
+                            title: m.eventsType === "UserJoin" ? "UNIRSE" : "SALIR",
                             body: null,
                             renderLargerThumbnail: true,
                             thumbnailUrl: profile,
@@ -282,7 +281,7 @@ async function handleUserEvent(m) {
     } catch (error) {
         console.error("Error:", error);
         return bot.core.sendMessage(id, {
-            text: `${bold("[ ! ]")} Terjadi kesalahan: ${error.message}`
+            text: `${bold("[ ! ]")} Se produjo un error: ${error.message}`
         });
     }
-}
+        }
