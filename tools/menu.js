@@ -9,45 +9,45 @@ const {
 const moment = require("moment-timezone");
 
 /**
- * Generates a menu of available commands based on the provided command map and context.
- * @param {Object} ctx The context object containing information about the current context.
- * @returns {string} The generated menu text.
+ * Genera un menú de comandos disponibles basado en el mapa de comandos y el contexto proporcionados.
+ * @param {Object} ctx El objeto de contexto que contiene información sobre el contexto actual.
+ * @returns {string} El texto del menú generado.
  */
 exports.getMenu = (ctx) => {
     const commandsMap = ctx._self.cmd;
     const tags = {
-        "main": "Main",
-        "ai": "AI",
-        "game": "Game",
-        "converter": "Converter",
-        "downloader": "Downloader",
-        "fun": "Fun",
-        "group": "Group",
-        "islamic": "Islamic",
+        "main": "Principal",
+        "ai": "IA",
+        "game": "Juego",
+        "converter": "Convertidor",
+        "downloader": "Descargador",
+        "fun": "Diversión",
+        "group": "Grupo",
+        "islamic": "Islámico",
         "internet": "Internet",
-        "maker": "Maker",
-        "tools": "Tools",
-        "owner": "Owner",
-        "info": "Info",
-        "": "No Category"
+        "maker": "Creador",
+        "tools": "Herramientas",
+        "owner": "Propietario",
+        "info": "Información",
+        "": "Sin Categoría"
     };
 
-    if (!commandsMap || commandsMap.size === 0) return `${bold("[ ! ]")} Terjadi kesalahan: Tidak ada perintah yang ditemukan.`;
+    if (!commandsMap || commandsMap.size === 0) return `${bold("[ ! ]")} Se produjo un error: No se encontraron comandos.`;
 
     const sortedCategories = Object.keys(tags);
 
     const readmore = "\u200E".repeat(4001);
 
     let text =
-        `Hai ${ctx._sender.pushName || "Kak"}, berikut adalah daftar perintah yang tersedia!\n` +
+        `Hola ${ctx._sender.pushName || "Amigo"}, ¡aquí tienes la lista de comandos disponibles!\n` +
         "\n" +
-        `╭ ➲ Waktu aktif: ${convertMsToDuration(Date.now() - global.system.startTime) || "kurang dari satu detik."}\n` +
-        `│ ➲ Tanggal: ${moment.tz(global.system.timeZone).format("DD/MM/YY")}\n` +
-        `│ ➲ Waktu: ${moment.tz(global.system.timeZone).format("HH:mm:ss")}\n` +
-        `│ ➲ Versi: ${package.version}\n` +
-        `╰ ➲ Prefix: ${ctx._used.prefix}\n` +
+        `╭ ➲ Tiempo activo: ${convertMsToDuration(Date.now() - global.system.startTime) || "menos de un segundo."}\n` +
+        `│ ➲ Fecha: ${moment.tz(global.system.timeZone).format("DD/MM/YY")}\n` +
+        `│ ➲ Hora: ${moment.tz(global.system.timeZone).format("HH:mm:ss")}\n` +
+        `│ ➲ Versión: ${package.version}\n` +
+        `╰ ➲ Prefijo: ${ctx._used.prefix}\n` +
         "\n" +
-        `${quote("Jangan lupa berdonasi agar bot tetap online!")}\n` +
+        `${quote("¡No olvides donar para que el bot siga en línea!")}\n` +
         `${global.msg.readmore}\n`;
 
     for (const category of sortedCategories) {
