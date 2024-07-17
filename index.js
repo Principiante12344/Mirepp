@@ -2,24 +2,24 @@ require("./config.js");
 const package = require("./package.json");
 const CFonts = require("cfonts");
 
-console.log("Starting...");
+console.log("Iniciando...");
 
-// Display title using CFonts.
+// Mostrar título usando CFonts.
 CFonts.say(package.name, {
     font: "chrome",
     align: "center",
     gradient: ["red", "magenta"],
 });
 
-// Displays package information.
+// Muestra información del paquete.
 const authorName = package.author.name || package.author;
 CFonts.say(
     `'${package.description}'\n` +
-    `By ${authorName}`, {
+    `Por ${authorName}`, {
         font: "console",
         align: "center",
         gradient: ["red", "magenta"],
     });
 
-// Import and run the main module.
+// Importar y ejecutar el módulo principal.
 require("./main.js");
