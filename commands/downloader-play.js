@@ -24,7 +24,7 @@ module.exports = {
 
         if (!input) return ctx.reply(
             `${global.msg.argument}\n` +
-            `Contoh: ${monospace(`${ctx._used.prefix + ctx._used.command} hikaru utada - one last kiss`)}`
+            `Ejemplo: ${monospace(`${ctx._used.prefix + ctx._used.command} hikaru utada - one last kiss`)}`
         );
 
         try {
@@ -35,11 +35,11 @@ module.exports = {
             const ytVid = searchRes.videos[0];
 
             await ctx.reply(
-                `❖ ${bold("Play")}\n` +
+                `❖ ${bold("Reproducir")}\n` +
                 "\n" +
-                `➲ Judul: ${ytVid.title}\n` +
-                `➲ Artis: ${ytVid.author.name}\n` +
-                `➲ Durasi: ${ytVid.timestamp}\n` +
+                `➲ Título: ${ytVid.title}\n` +
+                `➲ Artista: ${ytVid.author.name}\n` +
+                `➲ Duración: ${ytVid.timestamp}\n` +
                 `➲ URL: ${ytVid.url}\n` +
                 "\n" +
                 global.msg.footer
@@ -66,7 +66,7 @@ module.exports = {
             });
         } catch (error) {
             console.error("Error:", error);
-            return ctx.reply(`${bold("[ ! ]")} Terjadi kesalahan: ${error.message}`);
+            return ctx.reply(`${bold("[ ! ]")} Se produjo un error: ${error.message}`);
         }
     }
 };
